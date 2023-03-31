@@ -36,7 +36,7 @@ public class ArrayList<T> implements List<T> {
 	    if (size == DEFAULT_CAPACITY) {
 	        reallocate();
 	    }
-	    System.arraycopy(array, index, array, index + 1, size - index); //moving and adding
+	    System.arraycopy(array, index, array, index + 1, size - index); //moving and adding//
 	    array[index] = obj;
 	    size++;
 
