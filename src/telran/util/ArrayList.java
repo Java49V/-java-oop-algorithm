@@ -1,22 +1,25 @@
 package telran.util;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class ArrayList<T> implements List<T> {
 	private static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
 	private int size;
+
 	@SuppressWarnings("unchecked")
 	public ArrayList(int capacity) {
 		array = (T[]) new Object[capacity];
 	}
+
 	public ArrayList() {
 		this(DEFAULT_CAPACITY);
 	}
+
 	@Override
 	public boolean add(T obj) {
-		if(size == array.length) {
+		if (size == array.length) {
 			reallocate();
 		}
 		array[size] = obj;
@@ -26,8 +29,9 @@ public class ArrayList<T> implements List<T> {
 
 	private void reallocate() {
 		array = Arrays.copyOf(array, array.length * 2);
-		
+
 	}
+
 	@Override
 	public void add(int index, T obj) {
 		if (size == array.length) {
@@ -41,8 +45,8 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public T remove(int index) {
 		T res = array[index];
-		System.arraycopy(array, index + 1, array, index,
-				size - index - 1);
+
+		System.arraycopy(array, index + 1, array, index, size - index - 1);
 		size--;
 		return res;
 	}
@@ -52,48 +56,42 @@ public class ArrayList<T> implements List<T> {
 		T res = array[index];
 		return res;
 	}
-	
+
 	@Override
 	public int size() {
-		
+
 		return size;
 	}
-	
+
 	@Override
 	public boolean remove(T pattern) {
-	    	Integer index = indexOf(pattern);
-			T removedObj = remove(index);
-			return isEqual(removedObj, pattern);
-	    }
-
-	@SuppressWarnings("unchecked")
-//	public T[] toArray(T[] array) {
-//	    if (array.length < size) {
-//	        T[] newArray = (T[]) Array.newInstance(array.getClass().getComponentType(), size);
-//	        array = newArray;
-//	    }
-//	    System.arraycopy(this.array, 0, array, 0, size);
-//	    if (array.length > size) {
-//	        array[size] = null;
-//	    }
-//	    return array;
-//	}
-	
-	@Override
-	public T[] toArray(T[] array) {
-		T[] res = array;
-		if (array.length < size) {
-			res =  (T[])new Object[size];
+		boolean res = false;
+		int index = indexOf(pattern);
+		if (index > -1) {
+			res = true;
+			remove(index);
 		}
-		System.arraycopy(this.array, 0, res, 0, size);
 		return res;
 	}
-	
+
+	@Override
+	public T[] toArray(T[] ar) {
+		if (ar.length < size) {
+			ar = Arrays.copyOf(ar, size);
+		}
+		System.arraycopy(array, 0, ar, 0, size);
+		if (ar.length > size) {
+			ar[size] = null;
+		}
+
+		return ar;
+	}
+
 	@Override
 	public int indexOf(T pattern) {
 		int res = -1;
 		int index = 0;
-		while(index < size && res == -1) {
+		while (index < size && res == -1) {
 			if (isEqual(array[index], pattern)) {
 				res = index;
 			}
@@ -101,25 +99,54 @@ public class ArrayList<T> implements List<T> {
 		}
 		return res;
 	}
+
 	private boolean isEqual(T object, T pattern) {
-		
-		return pattern == null ? object == pattern :
-			pattern.equals(object);
+
+		return pattern == null ? object == pattern : pattern.equals(object);
 	}
-	
+
 	@Override
 	public int lastIndexOf(T pattern) {
 		int res = -1;
-		int index = size;
-		while (--index > 0 && res == -1) {
+		int index = size - 1;
+		while (index >= 0 && res == -1) {
 			if (isEqual(array[index], pattern)) {
 				res = index;
 			}
+			index--;
 		}
-
 		return res;
 	}
 
+	@Override
+	public void sort() {
+		Arrays.sort(array, 0, size);
+		
+	}
+
+	@Override
+	public void sort(Comparator<T> comp) {
+		Arrays.sort(array,  0, size, comp);
+		
+	}
+	
+	public static <T> void bubbleSort(T[] array, Comparator<T> comp) {
+	    int n = array.length;
+	    boolean swapped;
+	    do {
+	        swapped = false;
+	        for (int i = 1; i < n; i++) {
+	            if (comp.compare(array[i-1], array[i]) > 0) {
+	                T temp = array[i-1];
+	                array[i-1] = array[i];
+	                array[i] = temp;
+	                swapped = true;
+	            }
+	        }
+	        n--;
+	    } while (swapped);
+	}
+	
+
 
 }
-
