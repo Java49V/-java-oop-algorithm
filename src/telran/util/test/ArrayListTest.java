@@ -149,10 +149,10 @@ void setUp() {
 		assertArrayEquals(expected, actual);
 		
 	}
-//	@Test
 	
-	public class EvenOddComparatorTest {
-	    public static void main(String[] args) {
+	@Test
+//	public class EvenOddComparatorTest {
+	    public void EvenOddComparatorTest(String[] args) {
 	        Integer[] array = {10, -20, 7, 50, 100, 30, 17};
 	        Integer[] expected = {-20, 10, 30, 50, 100, 17, 7};
 
@@ -172,4 +172,4 @@ void setUp() {
 	    }
 	}
 
-}
+//}
