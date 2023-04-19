@@ -151,25 +151,35 @@ void setUp() {
 	}
 	
 	@Test
-//	public class EvenOddComparatorTest {
-	    public void EvenOddComparatorTest(String[] args) {
-	        Integer[] array = {10, -20, 7, 50, 100, 30, 17};
-	        Integer[] expected = {-20, 10, 30, 50, 100, 17, 7};
-
-	        // Add 17 to the array
-	        Integer[] newArray = Arrays.copyOf(array, array.length + 1);
-	        newArray[newArray.length - 1] = 17;
-
-	        // Sort the array with the EvenOddComparator
-	        Arrays.sort(newArray, new EvenOddComparator());
-
-	        // Check that the array is sorted correctly
-	        if (Arrays.equals(newArray, expected)) {
-	            System.out.println("Test passed");
-	        } else {
-	            System.out.println("Test failed");
-	        }
-	    }
+	void testEvenOddComparator() {
+		Integer[] expectedAdd17 = {10, -20, 7, 50, 100, 30, 17};
+		list.add(17);
+		runTest(expectedAdd17);
+		Integer[] expectedEvenOddComp = {-20, 10, 30, 50, 100, 17, 7};
+		list.sort(new EvenOddComparator());
+		runTest(expectedEvenOddComp);
 	}
-
-//}
+	
+//	@Test
+////	public class EvenOddComparatorTest {
+//	    void EvenOddComparatorTest(String[] args) {
+//	        Integer[] array = {10, -20, 7, 50, 100, 30, 17};
+//	        Integer[] expected = {-20, 10, 30, 50, 100, 17, 7};
+//
+//	        // Add 17 to the array
+//	        Integer[] newArray = Arrays.copyOf(array, array.length + 1);
+//	        newArray[newArray.length - 1] = 17;
+//
+//	        // Sort the array with the EvenOddComparator
+//	        Arrays.sort(newArray, new EvenOddComparator());
+//
+//	        // Check that the array is sorted correctly
+//	        if (Arrays.equals(newArray, expected)) {
+//	            System.out.println("Test passed");
+//	        } else {
+//	            System.out.println("Test failed");
+//	        }
+//	    }
+//	}
+//
+	}

@@ -130,7 +130,7 @@ public class ArrayList<T> implements List<T> {
 		
 	}
 	
-	public static <T> void bubbleSort(T[] array, Comparator<T> comp) {
+	public  void bubbleSort(Comparator<T> comp) {
 	    int n = array.length;
 	    boolean swapped;
 	    do {
@@ -146,7 +146,5 @@ public class ArrayList<T> implements List<T> {
 	        n--;
 	    } while (swapped);
 	}
-	
-
 
 }
