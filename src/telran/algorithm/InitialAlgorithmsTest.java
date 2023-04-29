@@ -2,6 +2,8 @@ package telran.algorithm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 class InitialAlgorithmTest {
@@ -16,6 +18,11 @@ class InitialAlgorithmTest {
 
 		short[] numbersNoMatches_Pos = { 1, 2, 3, 4, 5 };
 		assertEquals(-1, InitialAlgorithms.getMaxPositiveWithNegativeReflect(numbersNoMatches_Pos));
+		
+		short[] array = {-3, 1, 4, -1, 3, -4};
+        short result = InitialAlgorithms.getMaxPositiveWithNegativeReflect(array);
+        System.out.println("getMaxPositiveWithNegativeReflect test:");
+        System.out.println(Arrays.toString(array) + " => " + result);
 
 	}
 
@@ -32,6 +39,12 @@ class InitialAlgorithmTest {
 
 		short[] numbersMiddleSum = { 8, 1, 2, 3, 3 };
 		assertTrue(InitialAlgorithms.isSum2(numbersMiddleSum, (short) 6));
+		
+		short[] array = {1, 2, 3, 4, 5};
+        short sum = 7;
+        boolean result = InitialAlgorithms.isSum2(array, sum);
+        System.out.println("isSum2 test:");
+        System.out.println(Arrays.toString(array) + ", sum = " + sum + " => " + result);
 	}
 
 	@Test
@@ -47,6 +60,17 @@ class InitialAlgorithmTest {
 		InitialAlgorithms.sortShortPositive(randomArray);
 		assertTrue(runSortedAscendingArrayTest(randomArray));
 	}
+	
+	@Test
+	void testSortMethods() {
+        short[] array = getRandomArray(100_000);
+        System.out.println("Sorting 100,000 numbers:");
+        runSortedAscendingArrayTest(array);
+
+        array = getRandomArray(1_000_000);
+        System.out.println("\nSorting 1,000,000 numbers:");
+        runSortedAscendingArrayTest(array);
+    }
 
 	private boolean runSortedAscendingArrayTest(short[] array) {
 		int counter = 0;
