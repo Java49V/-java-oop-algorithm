@@ -2,66 +2,70 @@ package telran.algorithm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import static telran.algorithm.InitialAlgorithms.*;
-
-import java.util.Arrays;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import static telran.algorithm.InitialAlgorithms.*;
-class InitialAlgorithmsTest {
- int N_NUMBERS = 100000;
- short[] array;
 
- void setUpBigArray() {
-	 
-	 array = new short[N_NUMBERS];
-	 for(int i = 0; i < N_NUMBERS; i++) {
-		 array[i] = (short) (Math.random() * Short.MAX_VALUE);
-	 }
- }
+class InitialAlgorithmTest {
+
 	@Test
-	@Disabled
-	void bubbleSortTest() {
-		setUpBigArray();
-		bubbleSort(array);
-		runTest();
+	void testGetMaxPositiveWithNegativeReflect() {
+		short[] numbers = { -50, -20, 7, 10, 30, 20, 50, 100, 0 };
+		assertEquals(50, InitialAlgorithms.getMaxPositiveWithNegativeReflect(numbers));
+
+		short[] numbersNoMatches_Neg = { 0, -1, -2, -3, -4, -5 };
+		assertEquals(-1, InitialAlgorithms.getMaxPositiveWithNegativeReflect(numbersNoMatches_Neg));
+
+		short[] numbersNoMatches_Pos = { 1, 2, 3, 4, 5 };
+		assertEquals(-1, InitialAlgorithms.getMaxPositiveWithNegativeReflect(numbersNoMatches_Pos));
+
 	}
+
 	@Test
-	void SortPositiveShortTest() {
-		setUpBigArray();
-		sortShortPositive(array);
-		runTest();
+	void testIsSum2() {
+		short[] numbers = { 0, 5, 1, 3, 2, 4 };
+		assertTrue(InitialAlgorithms.isSum2(numbers, (short) 5));
+
+		short[] numbersNoSum = { 0, 1, 2, 3, 4, 5 };
+		assertFalse(InitialAlgorithms.isSum2(numbersNoSum, (short) 0));
+
+		short[] numbersSumZero = { 0, 1, 2, 3, 4, 0 };
+		assertTrue(InitialAlgorithms.isSum2(numbersSumZero, (short) 0));
+
+		short[] numbersMiddleSum = { 8, 1, 2, 3, 3 };
+		assertTrue(InitialAlgorithms.isSum2(numbersMiddleSum, (short) 6));
 	}
-	private void runTest() {
-		for(int i = 1; i < N_NUMBERS; i++) {
-			assertTrue(array[i - 1] <= array[i]);
+
+	@Test
+	void testBubbleSort() {
+		short[] randomArray = getRandomArray(10000);
+		InitialAlgorithms.bubbleSort(randomArray);
+		assertTrue(runSortedAscendingArrayTest(randomArray));
+	}
+
+	@Test
+	void testSortShortPositive() {
+		short[] randomArray = getRandomArray(1000000);
+		InitialAlgorithms.sortShortPositive(randomArray);
+		assertTrue(runSortedAscendingArrayTest(randomArray));
+	}
+
+	private boolean runSortedAscendingArrayTest(short[] array) {
+		int counter = 0;
+		for (int i = 0; i < array.length - 1; i++) {
+			if (array[i] > array[i + 1]) {
+				counter++;
+			}
 		}
-		
+
+		return counter == 0;
+
 	}
-	@Test
-	void isSum2Test() {
-		short[] array = {30000, 1, 5, 2, 10000, 0, 500,0};
-		short[] array1 = {30000, 1, 5, 2, 10000, 0, 500,0, Short.MAX_VALUE};
-//		assertTrue(isSum2(array, (short)30000));
-//		assertTrue(isSum2(array, (short)7));
-//		assertFalse(isSum2(array, (short)30003));
-//		assertFalse(isSum2(array, (short)8));
-		assertTrue(isSum2(array1, Short.MIN_VALUE));
-		
-	}
-	@Test
-	void getMaxPositiveWithNegativeTest() {
-		short[] array = {1, 1, 1, -1, 20, 100,200, 100 -100, -100, -20, -40, 80};
-		short[] array1 = {-40, 1, -40, -6, 2, 3, 40};
-		short[] array2 = {40, 1, 2, 3, 40, -30};
-		assertEquals(100,
-				getMaxPositiveWithNegativeReflect(array));
-		assertEquals(40,
-				getMaxPositiveWithNegativeReflect(array1));
-		assertEquals(-1,
-				getMaxPositiveWithNegativeReflect(array2));
+
+	private short[] getRandomArray(int size) {
+		short[] randomArray = new short[size];
+		for (int i = 0; i < randomArray.length; i++) {
+			randomArray[i] = (short) (Math.random() * Short.MAX_VALUE);
+		}
+		return randomArray;
 	}
 
 }

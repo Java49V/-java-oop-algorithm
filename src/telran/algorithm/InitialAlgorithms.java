@@ -3,9 +3,9 @@ package telran.algorithm;
 public class InitialAlgorithms {
 	public static void sortShortPositive(short[] array) {
 		int[] helper = new int[Short.MAX_VALUE];
-		// helper[index] => count of occurrences for number index in array
-		// helper[1000] = 2 => number 1000 occurs twice in the source array
-		// helper[2] = 0;
+		// helper[index] => count of occurences for number index in array
+		// helper[1000] = 2 => number 1000 occurs twice times in the source array
+		// helper[2] = 0 => there is no number 2 in the given array;
 		for (int i = 0; i < array.length; i++) {
 			helper[array[i]]++;
 		}
@@ -15,27 +15,20 @@ public class InitialAlgorithms {
 				array[ind++] = (short) i;
 			}
 		}
-
 	}
 
 	public static boolean isSum2(short[] array, short sum) {
-		// returns true if there are two numbers in the given array,
-		// sum of which equals the given sum value
-		// otherwise false
-	
-		int helperSize = sum < 0 ? Short.MAX_VALUE + 1 : sum + 1;
-		boolean[] helper = new boolean[helperSize];
 		boolean res = false;
+		int[] helper = new int[sum + 1];
 		int index = 0;
 		while (index < array.length && !res) {
-			short value = array[index];
-			short secondValue = (short) (sum - value);
-			if (secondValue >= 0) {
-				if (helper[secondValue]) {
-					res = true;
+			int indexHelper = array[index];
+			if (indexHelper <= sum) {
+				if (helper[indexHelper] == 0) {
+					helper[sum - indexHelper] = 1;
 				} else {
-					helper[value] = true;
-				}
+					res = true;
+				}	
 			}
 			index++;
 		}
@@ -43,48 +36,42 @@ public class InitialAlgorithms {
 	}
 
 	public static short getMaxPositiveWithNegativeReflect(short[] array) {
-		// returns maximal positive number, for which there is the negative image
-		// If there are not such numbers at all the method returns -1
 		short res = -1;
-		byte[] helper = new byte[Short.MAX_VALUE];
-		short candidate = -1;
-		for (int i = 0; i < array.length; i++) {
-			candidate = (short) Math.abs(array[i]);
-			if (array[i] < 0) {
+		int[] helper = new int[Short.MAX_VALUE];
 
-				if (helper[candidate] == 1 && candidate > res) {
-					res = candidate;
-				} else if (helper[candidate] == 0) {
-					helper[candidate] = -1;
-				}
+		for (int i = 0; i < array.length; i++) {
+
+			int indexHelper = Math.abs(array[i]);
+
+			if (helper[indexHelper] == 0) {
+				helper[indexHelper] = array[i] > 0 ? 1 : -1;
+
+			} else if (helper[indexHelper] > 0) {
+				res = (array[i] < 0 && res < indexHelper) ? (short) indexHelper : res;
+
 			} else {
-				if (helper[candidate] == -1 && candidate > res) {
-					res = candidate;
-				} else if (helper[candidate] == 0) {
-					helper[candidate] = 1;
-				}
+				res = (array[i] > 0 && res < indexHelper) ? (short) indexHelper : res;
+
 			}
 		}
-
 		return res;
 	}
 
 	public static void bubbleSort(short[] array) {
-		// sorting with bubble sort algorithm
-		int size = array.length;
-		boolean flUnsorted = false;
+		int n = array.length;
+		boolean flUnSort = true;
 		do {
-			size--;
-			flUnsorted = false;
-			for (int i = 0; i < size; i++) {
+			flUnSort = false;
+			n--;
+			for (int i = 0; i < n; i++) {
 				if (array[i] > array[i + 1]) {
-					short tmp = array[i];
+					short number = array[i];
 					array[i] = array[i + 1];
-					array[i + 1] = tmp;
-					flUnsorted = true;
+					array[i + 1] = number;
+					flUnSort = true;
 				}
 			}
-		} while (flUnsorted);
-
+		} while (flUnSort);
 	}
+
 }
