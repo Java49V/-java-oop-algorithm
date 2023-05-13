@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
-	private static final int DEFAULT_CAPASITY = 16;
+	private static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
 	private int size;
 
@@ -15,7 +15,7 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	public ArrayList() {
-		this(DEFAULT_CAPASITY);
+		this(DEFAULT_CAPACITY);
 	}
 
 	@Override
@@ -34,39 +34,33 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public int size() {
-		return size;
-	}
-
-	@Override
 	public void add(int index, T obj) {
+		if (index < 0 || index > size) {
+			throw new IndexOutOfBoundsException(index);
+		}
 		if (size == array.length) {
 			reallocate();
 		}
-		if(index < 0 || index > size) {
-			throw new IndexOutOfBoundsException(index);
-		}
-			System.arraycopy(array, index, array, index + 1, size - index);
-			array[index] = obj;
-			size++;
+		System.arraycopy(array, index, array, index + 1, size - index);
+		array[index] = obj;
+		size++;
 	}
 
 	@Override
 	public T remove(int index) {
-		T removedObj = null;
 		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException(index);
 		}
-			removedObj = array[index];
-			size--;
-			System.arraycopy(array, index + 1, array, index, size - index);
-		
-		return removedObj;
+		T res = array[index];
+
+		System.arraycopy(array, index + 1, array, index, size - index - 1);
+		size--;
+		return res;
 	}
 
 	@Override
 	public T get(int index) {
-		if(index < 0 || index >= size) {
+		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException(index);
 		}
 		T res = array[index];
@@ -74,22 +68,33 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean remove(T pattern) {
-		int index = indexOf(pattern);
-		return index > -1 ? isEqual(remove(index), pattern) : false;
+	public int size() {
+
+		return size;
 	}
 
 	@Override
-	public T[] toArray(T[] array) {
-		T[] res = array;
-		if (array.length < size) {
-			res = Arrays.copyOf(res, size);
-		}
-		System.arraycopy(this.array, 0, res, 0, size);
-		if (res.length > size) {
-			res[size] = null;
+	public boolean remove(T pattern) {
+		boolean res = false;
+		int index = indexOf(pattern);
+		if (index > -1) {
+			res = true;
+			remove(index);
 		}
 		return res;
+	}
+
+	@Override
+	public T[] toArray(T[] ar) {
+		if (ar.length < size) {
+			ar = Arrays.copyOf(ar, size);
+		}
+		System.arraycopy(array, 0, ar, 0, size);
+		if (ar.length > size) {
+			ar[size] = null;
+		}
+
+		return ar;
 	}
 
 	@Override
@@ -105,49 +110,54 @@ public class ArrayList<T> implements List<T> {
 		return res;
 	}
 
-	@Override
-	public int lastIndexOf(T pattern) {
-		int res = -1;
-		int index = size;
-		while (--index > 0 && res == -1) {
-			if (isEqual(array[index], pattern)) {
-				res = index;
-			}
-		}
-
-		return res;
-	}
-
 	private boolean isEqual(T object, T pattern) {
 
 		return pattern == null ? object == pattern : pattern.equals(object);
 	}
 
 	@Override
+	public int lastIndexOf(T pattern) {
+		int res = -1;
+		int index = size - 1;
+		while (index >= 0 && res == -1) {
+			if (isEqual(array[index], pattern)) {
+				res = index;
+			}
+			index--;
+		}
+		return res;
+	}
+
+	//@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
+	@Override
 	public void sort() {
-		Arrays.sort(array, 0, size);
+		sort((Comparator<T>)Comparator.naturalOrder());
+		
 	}
 
 	@Override
 	public void sort(Comparator<T> comp) {
-		boolean flSort = true;
-		for (int i = 0; i < size && flSort; i++) {
-			flSort = false;
-			for (int y = 0; y < size - i - 1; y++) {
-				if (comp.compare(array[y], array[y + 1]) > 0) {
-					T obj = array[y];
-					array[y] = array[y + 1];
-					array[y + 1] = obj;
-					flSort = true;
+		int n = size;
+		boolean flUnSort = true;
+		do {
+			flUnSort = false;
+			n--;
+			for(int i = 0; i < n; i++) {
+				if (comp.compare(array[i], array[i + 1]) > 0) {
+					swap(i);
+					flUnSort = true;
 				}
 			}
-		}
+		}while(flUnSort);
+		
 	}
 
-	public void toMyString() {
-		for (int i = 0; i < size; i++) {
-			System.out.print(array[i] + " ");
-		}
+	private void swap(int i) {
+		T tmp = array[i];
+		array[i] = array[i + 1];
+		array[i + 1] = tmp;
+		
 	}
 
 	@Override
@@ -166,37 +176,33 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public int lastIndexOf(Predicate<T> predicate) {
 		int res = -1;
-		int index = size;
-		while (--index > 0 && res == -1) {
+		int index = size - 1;
+		while (index >= 0 && res == -1) {
 			if (predicate.test(array[index])) {
 				res = index;
 			}
+			index--;
 		}
-
 		return res;
 	}
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-		boolean res = false;
-		sort((T a, T b) -> {
-			int resSort = 0;
-			boolean predA = predicate.test((T) a);
-			boolean predB = predicate.test((T) b);
-			if (predA != predB) {
-				resSort = predA == true ? 1 : -1;
-			}
-			return resSort;
-		});
-		int index = indexOf(predicate);
-		if (index > -1) {
-			size = index;
-			res = true;
+		int oldSize = size;
+//		int i = 0;
+//		while(i < size) {
+//			if(predicate.test(array[i])) {
+//				remove(i);
+//			} else {
+//				i++;
+//			}
+//		}
+		for(int i = size - 1; i >= 0; i--) {
+			if(predicate.test(array[i])) {
+				remove(i);
+			} 
 		}
-
-		return res;
+		return oldSize > size;
 	}
 
 }
-
-
