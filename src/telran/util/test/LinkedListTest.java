@@ -10,11 +10,11 @@ package telran.util.test;
 
 import telran.util.*;
 
-class ArrayListTest extends ListTest {
+class LinkedListTest extends ListTest {
 
 	@Override
-	protected <T> List<T> getList() {		
-		return new ArrayList<>();
+	protected <T> List<T> getList() {
+		return new LinkedList<>();
 	}
 	
 }
