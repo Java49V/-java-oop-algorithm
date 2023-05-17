@@ -98,6 +98,7 @@ public class LinkedList<T> implements List<T> {
 		return lastIndexOf(obj -> isEqual(obj, pattern));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void sort() {
 //		sort(null);
@@ -109,7 +110,8 @@ public class LinkedList<T> implements List<T> {
 		if (size <= 1) {
 	        return; // Already sorted
 	    }
-        T[] array = toArray((T[]) new Object[size]);
+        @SuppressWarnings("unchecked")
+		T[] array = toArray((T[]) new Object[size]);
         // Use Arrays.sort() to sort the array
         if (comp == null) {
             Arrays.sort(array);
