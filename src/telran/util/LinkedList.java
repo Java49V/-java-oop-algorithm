@@ -2,14 +2,34 @@ package telran.util;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class LinkedList<T> implements List<T> {
 	Node<T> head;
 	Node<T> tail;
 	int size;
+private class LinkedListIterator implements Iterator<T> {
+	 private Node<T> current = head;
 
-	private static class Node<T> {
+	@Override
+	public boolean hasNext() {
+		 return current != null;
+	}
+
+	@Override
+	public T next() {
+		 if (!hasNext()) {
+	            throw new NoSuchElementException();
+	        }
+	        T obj = current.obj;
+	        current = current.next;
+	        return obj;
+	}
+	
+}
+	static class Node<T> {
 		T obj;
 		Node<T> next;
 		Node<T> prev;
@@ -31,34 +51,9 @@ public class LinkedList<T> implements List<T> {
 		return size;
 	}
 
-	@Override
-	public boolean remove(T pattern) {
-		boolean res = false;
-		int index = indexOf(pattern);
-		if (index > -1) {
-			res = true;
-			remove(index);
-		}
-		return res;
-	}
+	
 
-	@Override
-	public T[] toArray(T[] ar) {
-		if (ar.length < size) {
-			ar = Arrays.copyOf(ar, size);
-		}
-		Node<T> current = head;
-		int index = 0;
-		while (current != null) {
-			ar[index++] = current.obj;
-			current = current.next;
-		}
-		if (ar.length > size) {
-			ar[size] = null;
-		}
-		return ar;
-	}
-
+	
 	@Override
 	public void add(int index, T obj) {
 		if (index < 0 || index > size) {
@@ -66,6 +61,7 @@ public class LinkedList<T> implements List<T> {
 		}
 		Node<T> node = new Node<>(obj);
 		addNode(index, node);
+
 	}
 
 	@Override
@@ -85,48 +81,38 @@ public class LinkedList<T> implements List<T> {
 		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException(index);
 		}
+
 		return getNode(index).obj;
 	}
 
 	@Override
-	public int indexOf(T pattern) {
-		return indexOf(obj -> isEqual(obj, pattern));
-	}
-
-	@Override
-	public int lastIndexOf(T pattern) {
-		return lastIndexOf(obj -> isEqual(obj, pattern));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void sort() {
-//		sort(null);
-		sort((Comparator<T>) Comparator.naturalOrder());
-	}
-
-	@Override
 	public void sort(Comparator<T> comp) {
-		if (size <= 1) {
-	        return; // Already sorted
+		//TODO
+		//1. call the method toArray
+		//2. By applying Arrays.sort you sort the array from #1
+		//3. Passing over all LinkedList nodes and setting references to objects (T)
+		// in the appropriate order from #2
+		T[] array = toArray();
+	    Arrays.sort(array, comp);
+	    Node<T>current = head;
+	    int index = 0;
+	    while(current != null) {
+	    	current.obj = array[index++];
+	    	current = current.next;
 	    }
-        @SuppressWarnings("unchecked")
-		T[] array = toArray((T[]) new Object[size]);
-        // Use Arrays.sort() to sort the array
-        if (comp == null) {
-            Arrays.sort(array);
-        } else {
-            Arrays.sort(array, comp);
-        }
-        Node<T> current = head;
-        int index = 0;
-        while (current != null) {
-            current.obj = array[index++];
-            current = current.next;
-        }
-//        return array;
-	}
 
+	}
+	private T[] toArray() {
+		@SuppressWarnings("unchecked")
+		T[] array = (T[]) new Object[size];
+	    Node<T> current = head;
+	    int index = 0;
+	    while(current != null) {
+	    	array[index++] = current.obj;
+	    	current = current.next;
+	    }
+	    return array;
+	}
 	@Override
 	public int indexOf(Predicate<T> predicate) {
 		int index = 0;
@@ -160,14 +146,9 @@ public class LinkedList<T> implements List<T> {
 				removeNode(current);
 			}
 			current = next;
+
 		}
 		return oldSize > size;
-	}
-
-	@Override
-	public void toMyString() {
-		// TODO Auto-generated method stub
-
 	}
 
 	private void addNode(int index, Node<T> node) {
@@ -204,6 +185,7 @@ public class LinkedList<T> implements List<T> {
 		node.next = nodeA;
 		nodeBefore.next = node;
 		nodeA.prev = node;
+
 	}
 
 	private Node<T> getNode(int index) {
@@ -227,36 +209,7 @@ public class LinkedList<T> implements List<T> {
 		return current;
 	}
 
-	private void removeNode(Node<T> current) {
-		if (current == head) {
-			removeNodeHead();
-		} else if (current == tail) {
-			removeNodeTail();
-		} else {
-			removeMiddleNode(current);
-		}
-		size--;
-	}
-
-	private void removeMiddleNode(Node<T> current) {
-		Node<T> nodeBefore = current.prev;
-		Node<T> nodeAfter = current.next;
-		nodeBefore.next = nodeAfter;
-		nodeAfter.prev = nodeBefore;
-		current.next = current.prev = null;
-	}
-
-	private void removeNodeTail() {
-		Node<T> newTail = tail.prev;
-		if (newTail != null) {
-			newTail.next = null;
-		}
-		tail.prev = null;
-		tail = newTail;
-
-	}
-
-	private void removeNodeHead() {
+	private void removeHead() {
 		Node<T> newHead = head.next;
 		if (newHead != null) {
 			newHead.prev = null;
@@ -266,9 +219,41 @@ public class LinkedList<T> implements List<T> {
 
 	}
 
-	private boolean isEqual(T object, T pattern) {
-
-		return pattern == null ? object == pattern : pattern.equals(object);
+	private void removeTail() {
+		Node<T> newTail = tail.prev;
+		if (newTail != null) {
+			newTail.next = null;
+		}
+		tail.prev = null;
+		tail = newTail;
 	}
+
+	private void removeMiddle(Node<T> node) {
+		Node<T> nodeBefore = node.prev;
+		Node<T> nodeAfter = node.next;
+		nodeBefore.next = nodeAfter;
+		nodeAfter.prev = nodeBefore;
+		node.next = node.prev = null;
+	}
+
+	private void removeNode(Node<T> node) {
+		if (node == head) {
+			removeHead();
+		} else if (node == tail) {
+			removeTail();
+		} else {
+			removeMiddle(node);
+		}
+		size--;
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return new LinkedListIterator();
+	}
+
+	
+
+	
 
 }
