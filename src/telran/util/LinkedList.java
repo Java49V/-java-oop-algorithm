@@ -10,26 +10,39 @@ public class LinkedList<T> implements List<T> {
 	Node<T> head;
 	Node<T> tail;
 	int size;
-private class LinkedListIterator implements Iterator<T> {
-	 private Node<T> current = head;
+	private class LinkedListIterator implements Iterator<T> {
+		Node<T> current = head;
+		boolean flNext = false;
 
-	@Override
-	public boolean hasNext() {
-		 return current != null;
+		@Override
+		public boolean hasNext() {
+			
+			return current != null;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T obj = current.obj;
+			current = current.next;
+			flNext = true;
+			return obj;
+		}
+		@Override
+		public void remove() {
+			if(!flNext) {
+			throw new IllegalStateException();
+			}
+			Node<T> removedNode = current != null? current.prev: tail;
+			removeNode(removedNode);
+			flNext = false;
+		}
+		
 	}
 
-	@Override
-	public T next() {
-		 if (!hasNext()) {
-	            throw new NoSuchElementException();
-	        }
-	        T obj = current.obj;
-	        current = current.next;
-	        return obj;
-	}
-	
-}
-	static class Node<T> {
+	private static class Node<T> {
 		T obj;
 		Node<T> next;
 		Node<T> prev;
@@ -51,9 +64,6 @@ private class LinkedListIterator implements Iterator<T> {
 		return size;
 	}
 
-	
-
-	
 	@Override
 	public void add(int index, T obj) {
 		if (index < 0 || index > size) {
@@ -61,7 +71,6 @@ private class LinkedListIterator implements Iterator<T> {
 		}
 		Node<T> node = new Node<>(obj);
 		addNode(index, node);
-
 	}
 
 	@Override
@@ -81,38 +90,22 @@ private class LinkedListIterator implements Iterator<T> {
 		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException(index);
 		}
-
 		return getNode(index).obj;
 	}
 
 	@Override
 	public void sort(Comparator<T> comp) {
-		//TODO
-		//1. call the method toArray
-		//2. By applying Arrays.sort you sort the array from #1
-		//3. Passing over all LinkedList nodes and setting references to objects (T)
-		// in the appropriate order from #2
-		T[] array = toArray();
-	    Arrays.sort(array, comp);
-	    Node<T>current = head;
-	    int index = 0;
-	    while(current != null) {
-	    	current.obj = array[index++];
-	    	current = current.next;
-	    }
-
-	}
-	private T[] toArray() {
 		@SuppressWarnings("unchecked")
-		T[] array = (T[]) new Object[size];
-	    Node<T> current = head;
-	    int index = 0;
-	    while(current != null) {
-	    	array[index++] = current.obj;
-	    	current = current.next;
-	    }
-	    return array;
+		T[] array = toArray((T[]) new Object[size]);
+		Arrays.sort(array, comp);
+		int ind = 0;
+		Node<T> current = head;
+		while (current != null) {
+			current.obj = array[ind++];
+			current = current.next;
+		}
 	}
+
 	@Override
 	public int indexOf(Predicate<T> predicate) {
 		int index = 0;
@@ -136,19 +129,9 @@ private class LinkedListIterator implements Iterator<T> {
 	}
 
 	@Override
-	public boolean removeIf(Predicate<T> predicate) {
-		Node<T> current = head;
-		Node<T> next = null;
-		int oldSize = size;
-		while (current != null) {
-			next = current.next;
-			if (predicate.test(current.obj)) {
-				removeNode(current);
-			}
-			current = next;
+	public void toMyString() {
+		// TODO Auto-generated method stub
 
-		}
-		return oldSize > size;
 	}
 
 	private void addNode(int index, Node<T> node) {
@@ -185,7 +168,6 @@ private class LinkedListIterator implements Iterator<T> {
 		node.next = nodeA;
 		nodeBefore.next = node;
 		nodeA.prev = node;
-
 	}
 
 	private Node<T> getNode(int index) {
@@ -209,51 +191,47 @@ private class LinkedListIterator implements Iterator<T> {
 		return current;
 	}
 
-	private void removeHead() {
-		Node<T> newHead = head.next;
-		if (newHead != null) {
-			newHead.prev = null;
+	private void removeNode(Node<T> current) {
+		if (current == head) {
+			removeNodeHead();
+		} else if (current == tail) {
+			removeNodeTail();
+		} else {
+			removeMiddleNode(current);
 		}
-		head.next = null;
-		head = newHead;
-
+		size--;
 	}
 
-	private void removeTail() {
+	private void removeMiddleNode(Node<T> current) {
+		Node<T> nodeBefore = current.prev;
+		Node<T> nodeAfter = current.next;
+		nodeBefore.next = nodeAfter;
+		nodeAfter.prev = nodeBefore;
+		current.next = current.prev = null;
+	}
+
+	private void removeNodeTail() {
 		Node<T> newTail = tail.prev;
 		if (newTail != null) {
 			newTail.next = null;
 		}
 		tail.prev = null;
 		tail = newTail;
+
 	}
 
-	private void removeMiddle(Node<T> node) {
-		Node<T> nodeBefore = node.prev;
-		Node<T> nodeAfter = node.next;
-		nodeBefore.next = nodeAfter;
-		nodeAfter.prev = nodeBefore;
-		node.next = node.prev = null;
-	}
-
-	private void removeNode(Node<T> node) {
-		if (node == head) {
-			removeHead();
-		} else if (node == tail) {
-			removeTail();
-		} else {
-			removeMiddle(node);
+	private void removeNodeHead() {
+		Node<T> newHead = head.next;
+		if (newHead != null) {
+			newHead.prev = null;
 		}
-		size--;
+		head.next = null;
+		head = newHead;
 	}
 
 	@Override
 	public Iterator<T> iterator() {
 		return new LinkedListIterator();
 	}
-
-	
-
-	
 
 }

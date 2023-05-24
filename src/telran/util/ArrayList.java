@@ -7,34 +7,45 @@ import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
-	private static final int DEFAULT_CAPACITY = 16;
+	private static final int DEFAULT_CAPASITY = 16;
 	private T[] array;
 	private int size;
 	
-private class ArrayListIterator implements Iterator<T> {
-	private int currentIndex = 0;
-	 
-	@Override
-	public boolean hasNext() {
-		 return currentIndex < size();
+	private class ArrayListIterator implements Iterator<T>{
+		int currentIndex = 0;
+		boolean flNext = false;
+
+		@Override
+		public boolean hasNext() {
+			return currentIndex < size;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			flNext = true;
+			return array[currentIndex++];
+		}
+		@Override
+		public void remove() {
+			if(!flNext) {
+			throw new IllegalStateException();
+			}
+			ArrayList.this.remove(--currentIndex);
+			flNext = false;
+		}
+		
 	}
 
-	@Override
-	public T next() {
-		 if (!hasNext()) {
-	            throw new NoSuchElementException();
-	        }
-	        return get(currentIndex++);
-	}
-	
-}
 	@SuppressWarnings("unchecked")
 	public ArrayList(int capacity) {
 		array = (T[]) new Object[capacity];
 	}
 
 	public ArrayList() {
-		this(DEFAULT_CAPACITY);
+		this(DEFAULT_CAPASITY);
 	}
 
 	@Override
@@ -53,12 +64,17 @@ private class ArrayListIterator implements Iterator<T> {
 	}
 
 	@Override
+	public int size() {
+		return size;
+	}
+
+	@Override
 	public void add(int index, T obj) {
-		if (index < 0 || index > size) {
-			throw new IndexOutOfBoundsException(index);
-		}
 		if (size == array.length) {
 			reallocate();
+		}
+		if (index < 0 || index > size) {
+			throw new IndexOutOfBoundsException(index);
 		}
 		System.arraycopy(array, index, array, index + 1, size - index);
 		array[index] = obj;
@@ -67,15 +83,15 @@ private class ArrayListIterator implements Iterator<T> {
 
 	@Override
 	public T remove(int index) {
+		T removedObj = null;
 		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException(index);
 		}
-		T res = array[index];
-
-		System.arraycopy(array, index + 1, array, index, size - index - 1);
+		removedObj = array[index];
 		size--;
-		array[size]=null;
-		return res;
+		System.arraycopy(array, index + 1, array, index, size - index);
+		array[size] = null;
+		return removedObj;
 	}
 
 	@Override
@@ -88,33 +104,25 @@ private class ArrayListIterator implements Iterator<T> {
 	}
 
 	@Override
-	public int size() {
-
-		return size;
-	}
-
-	@Override
 	public void sort(Comparator<T> comp) {
-		int n = size;
-		boolean flUnSort = true;
-		do {
-			flUnSort = false;
-			n--;
-			for(int i = 0; i < n; i++) {
-				if (comp.compare(array[i], array[i + 1]) > 0) {
-					swap(i);
-					flUnSort = true;
+		boolean flSort = true;
+		for (int i = 0; i < size && flSort; i++) {
+			flSort = false;
+			for (int y = 0; y < size - i - 1; y++) {
+				if (comp.compare(array[y], array[y + 1]) > 0) {
+					T obj = array[y];
+					array[y] = array[y + 1];
+					array[y + 1] = obj;
+					flSort = true;
 				}
 			}
-		}while(flUnSort);
-		
+		}
 	}
 
-	private void swap(int i) {
-		T tmp = array[i];
-		array[i] = array[i + 1];
-		array[i + 1] = tmp;
-		
+	public void toMyString() {
+		for (int i = 0; i < size; i++) {
+			System.out.print(array[i] + " ");
+		}
 	}
 
 	@Override
@@ -133,39 +141,43 @@ private class ArrayListIterator implements Iterator<T> {
 	@Override
 	public int lastIndexOf(Predicate<T> predicate) {
 		int res = -1;
-		int index = size - 1;
-		while (index >= 0 && res == -1) {
+		int index = size;
+		while (--index >= 0 && res == -1) {
 			if (predicate.test(array[index])) {
 				res = index;
 			}
-			index--;
 		}
+
 		return res;
 	}
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-		int oldSize = size;
-//		int i = 0;
-//		while(i < size) {
-//			if(predicate.test(array[i])) {
-//				remove(i);
-//			} else {
-//				i++;
-//			}
-//		}
-		for(int i = size - 1; i >= 0; i--) {
-			if(predicate.test(array[i])) {
-				remove(i);
-			} 
-		}
-		return oldSize > size;
+		// optimized  O[N ^ 2]
+		 int oldSize = size;
+		    int indexA = 0;
+		    int indexB = 0;
+		    while (indexA < oldSize) {
+		        if (predicate.test(array[indexA])) {
+		            indexA++;
+		            size--;
+		        } else {
+		            array[indexB++] = array[indexA++];
+		        }
+		    }
+
+		    for (int i = size; i < oldSize; i++) {
+		        array[i] = null;
+		    }
+
+		    return oldSize > size;
+
 	}
 
 	@Override
 	public Iterator<T> iterator() {
-		
 		return new ArrayListIterator();
 	}
 
 }
+
