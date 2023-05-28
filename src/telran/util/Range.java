@@ -20,13 +20,16 @@ public class Range implements Iterable<Integer> {
 
 	private class RangeIterator implements Iterator<Integer> {
 		int current = min;
+		int prev = current;
 		boolean flNext = false;
+		
 
 		@Override
 		public boolean hasNext() {	
-				
-			return  current == max - 1 ? !removedNum.contains(current) :
-					current < max &&  removedNum.size() < max - min;
+				while(removedNum.contains(current)&& current < max ) {
+					current++;
+				}
+			return  current < max  ;
 				
 		}
 
@@ -34,11 +37,9 @@ public class Range implements Iterable<Integer> {
 		public Integer next() {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
-			}
+			}			
+			prev = current;
 			flNext = true;
-			if (removedNum.contains(current)) {
-				++current;
-			}
 			return current++;
 		}
 
@@ -47,7 +48,7 @@ public class Range implements Iterable<Integer> {
 			if (!flNext) {
 				throw new IllegalStateException();
 			}
-			removedNum.add(--current);
+			removedNum.add(prev);
 			flNext = false;
 		}
 	}
@@ -59,7 +60,7 @@ public class Range implements Iterable<Integer> {
 	}
 
 	public Integer[] toArray() {
-		Integer[] array = new Integer[max - min - removedNum.size()];
+		Integer[] array = new Integer[getSize()];
 		int index = 0;
 		Iterator<Integer> it = iterator();
 		while (it.hasNext()) {
@@ -70,15 +71,18 @@ public class Range implements Iterable<Integer> {
 
 	public boolean removeIf(Predicate<Integer> predicate) {
 		Iterator<Integer> it = iterator();
-		boolean res = false;
+		int oldSize = removedNum.size();
 		while (it.hasNext()) {
 			Integer obj = it.next();
 			if (predicate.test(obj)) {
 				it.remove();
-				res = true;
 			}
-		}
-		return res;
+		}		
+		return oldSize < removedNum.size();
+	}
+	
+	private int getSize() {
+		return max - min - removedNum.size();
 	}
 
 }

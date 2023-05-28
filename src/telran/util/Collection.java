@@ -21,17 +21,6 @@ public interface Collection<T> extends Iterable<T> {
 		return oldSize > size();
 	};
 	
- default boolean contains(T pattern) {
-		boolean contains = false;
-		Iterator<T> itr = iterator();
-		while(itr.hasNext() && !contains) {
-			if(isEqual(pattern, itr.next())) {
-				contains = true;
-			}				
-		}
-		return contains;
-	};
-	
 	default public T[] toArray(T[] array) {
 		int size = size();
 		if (array.length < size) {
@@ -54,5 +43,7 @@ public interface Collection<T> extends Iterable<T> {
 	default void clear() {
 		removeIf(element -> true);
 	}
+	
+	boolean contains(T pattern);
 
 }

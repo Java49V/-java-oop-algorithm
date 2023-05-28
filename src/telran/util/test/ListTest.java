@@ -2,10 +2,6 @@ package telran.util.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//import java.util.Arrays;
-//
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import telran.util.*;
@@ -104,7 +100,6 @@ abstract class ListTest extends CollectionTest{
 		persons.add(p2);
 		persons.add(p3);
 		Person expected[] = { p3, p1, p2 };
-		// persons.sort(new PersonsAgeComporator());
 		persons.sort((prs1, prs2) -> Integer.compare(prs2.getAge(), prs1.getAge()));
 		assertArrayEquals(expected, persons.toArray(new Person[0]));
 	}

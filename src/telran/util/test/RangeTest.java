@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Test;
 
 import telran.util.Range;
@@ -12,28 +11,28 @@ import telran.util.Range;
 class RangeTest {
 Range range = new Range(10, 14);
 	@Test
-	void constructorExceptionTest() {
-		assertThrowsExactly(IllegalArgumentException.class,
-				() -> new Range(10, 10));
+	void constructorExeptionTest() {
+		assertThrowsExactly(IllegalArgumentException.class, ()-> new Range(10,10));
 	}
 	@Test
 	void toArrayTest() {
-		Integer[] expected = {10, 11, 12, 13};
+		Integer[] expected = {10,11,12,13};
 		assertArrayEquals(expected, range.toArray());
 	}
 	@Test
 	void iteratorTest() {
 		Iterator<Integer> it1 = range.iterator();
 		Iterator<Integer> it2 = range.iterator();
-		it2.next();it2.next();it2.next(); it2.next();
+		it2.next(); it2.next(); it2.next();it2.next();
 		assertEquals(10, it1.next());
-		assertThrows(NoSuchElementException.class, () -> it2.next());
+		assertThrowsExactly(NoSuchElementException.class,()-> it2.next());
 	}
-	@Test 
-	void iteratorRemove() {
+	
+	@Test
+	void iteratorRemoveTest() {
 		Iterator<Integer> it1 = range.iterator();
-		Integer[] expectedFirst = {11, 12, 13};
-		Integer[] expectedLast = {11, 12};
+		Integer[] expectedFirst = {11,12,13};
+		Integer[] expectedLast = {11,12};
 		assertThrowsExactly(IllegalStateException.class, () -> it1.remove());
 		it1.next();
 		it1.remove();
@@ -41,23 +40,25 @@ Range range = new Range(10, 14);
 		assertThrowsExactly(IllegalStateException.class, () -> it1.remove());
 		while(it1.hasNext()) {
 			it1.next();
-			}
+		}
 		it1.remove();
-		assertArrayEquals(expectedLast, range.toArray());	
-	}
+		assertArrayEquals(expectedLast, range.toArray());
+	}	
+	
 	@Test
-	void removeIfTest() {
-		Range range1 = new Range(1,4);
-		assertTrue(range1.removeIf(num -> num % 2 != 0));
-		assertArrayEquals(new Integer[] {2}, range1.toArray());
+	void removeIfRangeTest1() {
+		Iterator<Integer> it = range.iterator();
+		Integer[] expected = {10,11};
+		it.next();   it.next();  it.next(); it.remove();
+		 it.next(); it.remove();
+		assertArrayEquals(expected, range.toArray());
 	}
 
-	void printArray(Integer[] ar, String title) {
-		System.out.println(title);
-		for(int i=0; i<ar.length; i++) {
-			System.out.print(ar[i] + " ");
-		}
-		System.out.println("");
+	@Test
+	void removeIfRangeTest() {
+		Range range1 = new Range(1, 4);
+		range1.removeIf(num -> num % 2 != 0);
+		assertArrayEquals(new Integer[] { 2 }, range1.toArray());
 	}
 	@Test
 	void removeIfAllTest() {

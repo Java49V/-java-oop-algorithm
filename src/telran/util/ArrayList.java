@@ -153,25 +153,20 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-		// optimized  O[N ^ 2]
-		 int oldSize = size;
-		    int indexA = 0;
-		    int indexB = 0;
-		    while (indexA < oldSize) {
-		        if (predicate.test(array[indexA])) {
-		            indexA++;
-		            size--;
-		        } else {
-		            array[indexB++] = array[indexA++];
-		        }
-		    }
-
-		    for (int i = size; i < oldSize; i++) {
-		        array[i] = null;
-		    }
-
-		    return oldSize > size;
-
+		//rewrite the removeIf method of ArrayList for optimization( O[N]
+		int oldSize = size;
+		int indexRemove = 0;
+		for(int indexCurrent = 0; indexCurrent < oldSize; indexCurrent++) {
+			if(predicate.test(array[indexCurrent])) {
+				size--;
+			} else {
+				array[indexRemove++] = array[indexCurrent];
+			}
+		}
+		for(int i = size; i < oldSize; i++) {
+			array[i] = null;
+		}
+		return oldSize > size;
 	}
 
 	@Override
