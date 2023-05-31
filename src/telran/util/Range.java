@@ -7,82 +7,87 @@ import java.util.function.Predicate;
 public class Range implements Iterable<Integer> {
 	private int min;
 	private int max;
-	private LinkedList<Integer> removedNum;
-
+	private Collection<Integer> removedList = new HashSet<>();
 	public Range(int min, int max) {
 		if (min >= max) {
 			throw new IllegalArgumentException("min must be less than max");
 		}
 		this.min = min;
 		this.max = max;
-		removedNum = new LinkedList<>();
 	}
-
 	private class RangeIterator implements Iterator<Integer> {
-		int current = min;
-		int prev = current;
+		Integer current = getCurrent(min - 1);
+		Integer prev = null;
 		boolean flNext = false;
-		
-
 		@Override
-		public boolean hasNext() {	
-				while(removedNum.contains(current)&& current < max ) {
-					current++;
-				}
-			return  current < max  ;
-				
+		public boolean hasNext() {
+			
+			return current != null;
 		}
 
 		@Override
 		public Integer next() {
-			if (!hasNext()) {
+			if(current == null) {
 				throw new NoSuchElementException();
-			}			
+			}
+			int currentNum = current;
 			prev = current;
+			current = getCurrent(current);
 			flNext = true;
-			return current++;
+			return currentNum;
+		}
+		private Integer getCurrent(Integer current) {
+			Integer res = null;
+			current++;
+			while(current < max && res == null) {
+				if(!removedList.contains(current)) {
+					res = current;
+				}
+				current++;
+			}
+			return res;
 		}
 
 		@Override
 		public void remove() {
-			if (!flNext) {
+			if(!flNext) {
 				throw new IllegalStateException();
 			}
-			removedNum.add(prev);
+			removedList.add(prev);
 			flNext = false;
+			
 		}
+		
 	}
-
 	@Override
 	public Iterator<Integer> iterator() {
-
+		
 		return new RangeIterator();
 	}
-
 	public Integer[] toArray() {
-		Integer[] array = new Integer[getSize()];
+		Integer [] array = new Integer[getSize()];
 		int index = 0;
 		Iterator<Integer> it = iterator();
-		while (it.hasNext()) {
+		while(it.hasNext()) {
 			array[index++] = it.next();
 		}
+		
 		return array;
 	}
-
 	public boolean removeIf(Predicate<Integer> predicate) {
+		int oldSize = getSize() ;
 		Iterator<Integer> it = iterator();
-		int oldSize = removedNum.size();
-		while (it.hasNext()) {
-			Integer obj = it.next();
-			if (predicate.test(obj)) {
+		while(it.hasNext()) {
+			int number = it.next();
+			if (predicate.test(number)) {
 				it.remove();
 			}
-		}		
-		return oldSize < removedNum.size();
+		}
+		return oldSize > getSize();
+	}
+	private int getSize() {
+		return max - min - removedList.size();
 	}
 	
-	private int getSize() {
-		return max - min - removedNum.size();
-	}
 
 }

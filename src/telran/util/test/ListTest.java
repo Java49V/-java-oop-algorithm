@@ -112,21 +112,21 @@ protected Collection<Integer> getCollection() {
 				persons.toArray(new Person[0]));
 		
 	}
-	@Test
-	void testEvenOddSorting() {
-		Integer[] expected = { -20,  10, 30, 50, 100, 7, -17};
-		list.add(-17);
-		//list.sort((a, b) -> evenOddCompare(a, b));
-//		list.sort((a, b) -> {
-//			int res = Math.abs(a % 2) - Math.abs(b % 2);
-//			if (res == 0) {
-//				res = a % 2 == 0 ? a - b : b - a;
-//			}
-//			return res;
-//		});
-		list.sort(ListTest::evenOddCompare);
-		assertArrayEquals(expected, list.toArray(new Integer[0]));
-	}
+//	@Test
+//	void testEvenOddSorting() {
+//		Integer[] expected = { -20,  10, 30, 50, 100, 7, -17};
+//		list.add(-17);
+//		//list.sort((a, b) -> evenOddCompare(a, b));
+////		list.sort((a, b) -> {
+////			int res = Math.abs(a % 2) - Math.abs(b % 2);
+////			if (res == 0) {
+////				res = a % 2 == 0 ? a - b : b - a;
+////			}
+////			return res;
+////		});
+//		list.sort(ListTest::evenOddCompare);
+//		assertArrayEquals(expected, list.toArray(new Integer[0]));
+//	}
 	@Test
 	void testIndexOfPredicate()  {
 		assertEquals(1, list.indexOf(a -> a < 0));

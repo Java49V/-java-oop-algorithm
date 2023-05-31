@@ -1,6 +1,6 @@
 package telran.util;
 
-//import java.util.Arrays;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -8,68 +8,68 @@ public class HashSet<T> implements Set<T> {
 	private static final int DEFAULT_HASH_TABLE_SIZE = 16;
 	private LinkedList<T>[] hashTable;
 	private int size;
-	
 	private class HashSetIterator implements Iterator<T> {
-		int indexHashTable = -1;
-		int indexList = 0;
-		LinkedList<T> currentList = getCurrentList();
-		LinkedList<T> prevList = null;
-		T currentObj = null;
+		Integer currentIteratorIndex;
+		Iterator<T> currentIterator;
+		Iterator<T> prevIterator;
 		boolean flNext = false;
-		int currentInd = 0;
-
+		HashSetIterator() {
+			initialState();
+		}
+		private void initialState() {
+			currentIteratorIndex = getCurrentIteratorIndex(-1);
+			if(currentIteratorIndex > -1) {
+				currentIterator = hashTable[currentIteratorIndex].iterator();
+				
+				
+			}
+			
+			
+		}
+		private int getCurrentIteratorIndex(int currentIndex) {
+			currentIndex++;
+			while(currentIndex < hashTable.length && 
+					(hashTable[currentIndex] == null || hashTable[currentIndex].size() == 0)) {
+				currentIndex++;
+			}
+			return currentIndex < hashTable.length ? currentIndex : -1;
+		}
 		@Override
 		public boolean hasNext() {
 			
-			return currentList != null && indexHashTable < hashTable.length;
-		}		
+			return currentIteratorIndex >= 0;
+		}
 
 		@Override
 		public T next() {
 			if(!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			prevList = currentList;
-			currentInd = indexHashTable;
-			currentObj = getCurrentObj(currentList);
+			T res = currentIterator.next();
+			prevIterator = currentIterator;
+			updateState();
 			flNext = true;
-			return currentObj;			
+			return res;
 		}
-		
+		private void updateState() {
+			if(!currentIterator.hasNext()) {
+				currentIteratorIndex =
+						getCurrentIteratorIndex(currentIteratorIndex);
+				if(currentIteratorIndex >= 0) {
+					currentIterator = hashTable[currentIteratorIndex].iterator();
+				}
+			}
+			
+			
+		}
 		@Override
 		public void remove() {
-			if (!flNext) {
-		        throw new IllegalStateException();
-		    }
-		    
-		    prevList.remove(currentObj);
-		    
-		    if (prevList.size() == 0) {
-		        hashTable[currentInd] = null;
-		        indexList = 0;
-		    } else {
-		        indexList--;
-		    }
-		    
-		    size--;
-		    flNext = false;
-		}
-		
-		private LinkedList<T> getCurrentList() {
-			indexHashTable++;
-			while(indexHashTable < hashTable.length && hashTable[indexHashTable] == null  ) {
-				indexHashTable++;
+			if(!flNext) {
+				throw new IllegalStateException();
 			}
-			return indexHashTable < hashTable.length ? hashTable[indexHashTable]: null;
-		}
-		
-		private T getCurrentObj(LinkedList<T> list) {
-			T obj = list.get(indexList++);
-			if(indexList == list.size()) {
-				indexList = 0;
-				currentList = getCurrentList();
-			}
-			return obj;
+			prevIterator.remove();
+			size--;
+			flNext = false;
 		}
 		
 	}
@@ -133,12 +133,8 @@ public class HashSet<T> implements Set<T> {
 		int index = getHashTableIndex(pattern);
 		if (hashTable[index] != null) {
 			res = hashTable[index].remove(pattern);
-			System.out.println("Res"+res);
 			if (res) {
 				size--;
-			}
-			if(hashTable[index].size()==0) {
-				hashTable[index] = null;
 			}
 		}
 		return res;
@@ -149,11 +145,6 @@ public class HashSet<T> implements Set<T> {
 		int index = getHashTableIndex(pattern);
 		return hashTable[index] != null && hashTable[index].contains(pattern);
 	}
-
-	@Override
-	public void toMyString() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }
