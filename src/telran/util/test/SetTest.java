@@ -3,6 +3,8 @@ package telran.util.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +12,7 @@ import telran.util.Collection;
 import telran.util.Set;
 
 public abstract class SetTest extends CollectionTest {
-   Set<Integer> set = getSet();
+  protected Set<Integer> set = getSet();
    abstract protected <T> Set<T> getSet();
    @Override
    @Test
@@ -32,41 +34,17 @@ public abstract class SetTest extends CollectionTest {
 		assertArrayEquals(expectedCopy, actual);
 		
 	}
-	@Test
-	void testToArrayForBigArray() {
-		Integer bigArray[] = new Integer[BIG_LENGTH];
-		for(int i = 0; i < BIG_LENGTH; i++) {
-			bigArray[i] = 10;
-		}
-		Integer actualArray[] = collection.toArray(bigArray);
-		Arrays.sort(actualArray,0,collection.size());
-		int size = collection.size();
-		Integer expected[] = Arrays.copyOf(numbers, numbers.length);
-		Arrays.sort(expected);
-		for(int i = 0; i < size; i++) {
-			assertEquals(expected[i], actualArray[i]);
-		}
-		assertNull(actualArray[size]);
-		assertTrue(bigArray == actualArray);
+
+	@Override
+	protected Integer[] getActual(Integer[] array, int size) {
+		Arrays.sort(array, 0, size);
+		return array;
 	}
-	@Test
-	void testToArrayForEmptyArray() {
-		Integer actualArray[] =
-				collection.toArray(new Integer[0]);
-		Arrays.sort(actualArray);
-		Integer expected[] = Arrays.copyOf(numbers, numbers.length);
-		Arrays.sort(expected);
-		assertArrayEquals(expected, actualArray);
-	}
-	@Test
-	void clearPerformance() {
-		Collection<Integer> bigCollection = getCollection();
-		// V.R. !!!
-		for(int i = 0; i < 1_000_0; i++) {
-			bigCollection.add(i);
-		}
-		bigCollection.clear();
-		assertEquals(0, bigCollection.size());
+	@Override
+	protected Integer[] getExpected (Integer[] array) {
+		Integer[] res = Arrays.copyOf(array, array.length);
+		Arrays.sort(res);
+		return res;		
 	}
 
 }

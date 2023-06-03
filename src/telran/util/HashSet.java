@@ -8,6 +8,7 @@ public class HashSet<T> implements Set<T> {
 	private static final int DEFAULT_HASH_TABLE_SIZE = 16;
 	private LinkedList<T>[] hashTable;
 	private int size;
+	
 	private class HashSetIterator implements Iterator<T> {
 		Integer currentIteratorIndex;
 		Iterator<T> currentIterator;
@@ -20,11 +21,7 @@ public class HashSet<T> implements Set<T> {
 			currentIteratorIndex = getCurrentIteratorIndex(-1);
 			if(currentIteratorIndex > -1) {
 				currentIterator = hashTable[currentIteratorIndex].iterator();
-				
-				
 			}
-			
-			
 		}
 		private int getCurrentIteratorIndex(int currentIndex) {
 			currentIndex++;
@@ -58,9 +55,7 @@ public class HashSet<T> implements Set<T> {
 				if(currentIteratorIndex >= 0) {
 					currentIterator = hashTable[currentIteratorIndex].iterator();
 				}
-			}
-			
-			
+			}			
 		}
 		@Override
 		public void remove() {
@@ -70,8 +65,7 @@ public class HashSet<T> implements Set<T> {
 			prevIterator.remove();
 			size--;
 			flNext = false;
-		}
-		
+		}		
 	}
 	@SuppressWarnings("unchecked")
 	public HashSet(int hashTableSize) {
@@ -133,8 +127,12 @@ public class HashSet<T> implements Set<T> {
 		int index = getHashTableIndex(pattern);
 		if (hashTable[index] != null) {
 			res = hashTable[index].remove(pattern);
+			System.out.println("Res"+res);
 			if (res) {
 				size--;
+			}
+			if(hashTable[index].size()==0) {
+				hashTable[index] = null;
 			}
 		}
 		return res;
@@ -145,6 +143,12 @@ public class HashSet<T> implements Set<T> {
 		int index = getHashTableIndex(pattern);
 		return hashTable[index] != null && hashTable[index].contains(pattern);
 	}
-	
+
+	@Override
+	public void toMyString() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
+

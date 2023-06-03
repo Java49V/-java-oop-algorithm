@@ -37,6 +37,7 @@ default int indexOf(T pattern) {
 default int lastIndexOf(T pattern) {
 	return lastIndexOf(obj -> isEqual(obj, pattern));
 }
+void toMyString();
 
 
 }

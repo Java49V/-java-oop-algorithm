@@ -1,15 +1,18 @@
 package telran.util.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
 
 import telran.util.*;
 
-class TreeSetTest extends SetTest {
-	
+
+public class TreeSetTest extends SortedSetTest {
+   
 	@Override
-	protected <T> Set<T> getSet() {
-		return new TreeSet<>();
-//		return new TreeSet<>((Comparator<T>) Comparator.naturalOrder());
+	protected <T> Set<T> getSet() {		
+		return new TreeSet<>() ;
 	}
+	
 }
+
 
