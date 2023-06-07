@@ -60,11 +60,11 @@ class LineRecursionTest {
 		assertEquals(25, LineRecursion.square(-5));
 		assertEquals(9, LineRecursion.square(-3));
 	}
-	@Test
-	void isSubstringTest () {
-		assertTrue(LineRecursion.isSubstring("Hello","lo"));
-		assertFalse(LineRecursion.isSubstring("Hello", "abs"));
-	}
+//	@Test
+//	void isSubstringTest () {
+//		assertTrue(LineRecursion.isSubstring("Hello","lo"));
+//		assertFalse(LineRecursion.isSubstring("Hello", "abs"));
+//	}
 //	@Test
 //	void factorialTest ()
 //	{
@@ -124,17 +124,17 @@ class LineRecursionTest {
 //	        assertThrows(IllegalArgumentException.class, () -> LineRecursion.square(-1));
 //	    }
 //	    
-//	    @Test
-//	    void testIsSubstring() {
-//	        assertTrue(LineRecursion.isSubstring("Hello", ""));
-//	        assertTrue(LineRecursion.isSubstring("Hello", "H"));
-//	        assertTrue(LineRecursion.isSubstring("Hello", "o"));
-//	        assertTrue(LineRecursion.isSubstring("Hello", "ello"));
-//	        assertTrue(LineRecursion.isSubstring("Hello", "Hello"));
-//	        assertFalse(LineRecursion.isSubstring("Hello", "L"));
-//	        assertFalse(LineRecursion.isSubstring("Hello", "World"));
-//	        assertFalse(LineRecursion.isSubstring("Hello", "Hood"));
-//	    }
+	    @Test
+	void isSubstringTest () {
+	        assertTrue(LineRecursion.isSubstring("Hello", ""));
+	        assertTrue(LineRecursion.isSubstring("Hello", "H"));
+	        assertTrue(LineRecursion.isSubstring("Hello", "o"));
+	        assertTrue(LineRecursion.isSubstring("Hello", "ello"));
+	        assertTrue(LineRecursion.isSubstring("Hello", "Hello"));
+	        assertFalse(LineRecursion.isSubstring("Hello", "L"));
+	        assertFalse(LineRecursion.isSubstring("Hello", "World"));
+	        assertFalse(LineRecursion.isSubstring("Hello", "Hood"));
+	    }
 
 }
 
