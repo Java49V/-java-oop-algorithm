@@ -3,8 +3,6 @@ package telran.util.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +10,7 @@ import telran.util.Collection;
 import telran.util.Set;
 
 public abstract class SetTest extends CollectionTest {
-  protected Set<Integer> set = getSet();
+   protected Set<Integer> set = getSet();
    abstract protected <T> Set<T> getSet();
    @Override
    @Test
@@ -34,17 +32,15 @@ public abstract class SetTest extends CollectionTest {
 		assertArrayEquals(expectedCopy, actual);
 		
 	}
-
 	@Override
 	protected Integer[] getActual(Integer[] array, int size) {
 		Arrays.sort(array, 0, size);
 		return array;
 	}
 	@Override
-	protected Integer[] getExpected (Integer[] array) {
+	protected Integer[] getExpected(Integer[] array) {
 		Integer[] res = Arrays.copyOf(array, array.length);
 		Arrays.sort(res);
-		return res;		
+		return res;
 	}
-
 }

@@ -67,6 +67,11 @@ public class Range implements Iterable<Integer> {
 	public Integer[] toArray() {
 		Integer [] array = new Integer[getSize()];
 		int index = 0;
+		//First way
+//		for(Integer num: this) {
+//			array[index++] = num;
+//		}
+		//Second way
 		Iterator<Integer> it = iterator();
 		while(it.hasNext()) {
 			array[index++] = it.next();
