@@ -1,45 +1,40 @@
 package telran.util.test;
 
-import telran.util.TreeSet;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import telran.util.Set;
+import telran.util.*;
+
 
 public class TreeSetTest extends SortedSetTest {
-TreeSet<Integer> treeSet;
-@BeforeEach
-@Override
-void setUp() {
-	super.setUp();
-	treeSet = (TreeSet<Integer>) set;
-}
+   TreeSet<Integer> treeSet;
+   @BeforeEach
+   @Override
+   void setUp() {
+	   super.setUp();
+	   treeSet = (TreeSet<Integer>) set;
+   }
 	@Override
-	protected <T> Set<T> getSet() {
-		
-		return new TreeSet<>();
+	protected <T> Set<T> getSet() {		
+		return new TreeSet<>() ;
 	}
-//	@Override
-//	@Test
-//	void clearPerformance() {
-//		
-//	}
+	
 	@Test
-	void displayTree() {
+	void displayTree () {
 		treeSet.setInitialLevel(5);
 		treeSet.setSpacesPerLevel(3);
 		treeSet.displayRotated();
 	}
 	@Test
-	void widthTest() {
+	void widthTest () {
 		assertEquals(3, treeSet.width());
+		
 	}
 	@Test
 	void heightTest() {
@@ -48,7 +43,7 @@ void setUp() {
 	@Test
 	void balanceTest() {
 		TreeSet<Integer> treeBalanced = new TreeSet<>();
-		int [] array = getRandomArray(255);
+		int[] array = getRandomArray(255);
 		fillCollection(treeBalanced, array);
 		treeBalanced.balance();
 		assertEquals(8, treeBalanced.height());
@@ -56,8 +51,8 @@ void setUp() {
 	}
 	@Test
 	void balanceTestFromSorted() {
-		int height = 20;
-		int nNumbers =  (int) Math.pow(2, height);
+		int height = 22;
+		int nNumbers =  (int) Math.pow(2, height); // 1 << height
 		int [] array = new int[nNumbers - 1];
 		for(int i = 0; i < array.length; i++) {
 			array[i] = i;
@@ -69,33 +64,35 @@ void setUp() {
 		
 		assertEquals(height, treeBalanced.height());
 		assertEquals(nNumbers / 2, treeBalanced.width());
-		
 	}
-	private void balanceOrder(int[] array) {
-		// TODO 
+	
+	private void balanceOrder(int[] array) {	
 		//reorder array such that adding to tree will get a balanced tree
-		 int[] temp = Arrays.copyOf(array, array.length);
-		    balanceOrderRecursive(array, temp, 0, array.length - 1, 0);
+		ArrayList<Integer> resArray = new ArrayList<>();		
+		balanceOrder(array, resArray,  0, array.length - 1);
+		int index = 0;
+		for(int num : resArray) {
+			array[index++] = num;
 		}
-
-		private void balanceOrderRecursive(int[] array, int[] temp, int left, int right, int index) {
-		    if (left > right) {
-		        return;
-		    }
-
-		    int mid = (left + right) / 2;
-		    array[index] = temp[mid];
-		    balanceOrderRecursive(array, temp, left, mid - 1, 2 * index + 1);
-		    balanceOrderRecursive(array, temp, mid + 1, right, 2 * index + 2);
-		
 	}
-		
+	
+	private void balanceOrder(int[] array, ArrayList<Integer> resArray,  int left, int right) {
+		if(left <= right) {
+			int midIndex = (left + right)/2;
+			resArray.add(array[midIndex]);
+			balanceOrder(array, resArray, left , midIndex - 1);
+			balanceOrder(array, resArray, midIndex + 1, right);			
+		}
+	}
 	@Test
 	void inversionTreeTest() {
 		Integer[] expected = {100, 50, 30, 10, 7, -20};
+		Integer[] res1 = treeSet.toArray(new Integer[0]);
+		
 		treeSet.inversion();
-	    assertArrayEquals(expected, treeSet.toArray(new Integer[0]));
-	    assertTrue(treeSet.contains(100));
+		Integer[] res = treeSet.toArray(new Integer[0]);		
+		assertArrayEquals(expected, res );
+		assertTrue(treeSet.contains(100));
 	}
 
 }
