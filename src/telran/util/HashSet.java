@@ -8,7 +8,6 @@ public class HashSet<T> implements Set<T> {
 	private static final int DEFAULT_HASH_TABLE_SIZE = 16;
 	private LinkedList<T>[] hashTable;
 	private int size;
-	
 	private class HashSetIterator implements Iterator<T> {
 		Integer currentIteratorIndex;
 		Iterator<T> currentIterator;
@@ -21,7 +20,11 @@ public class HashSet<T> implements Set<T> {
 			currentIteratorIndex = getCurrentIteratorIndex(-1);
 			if(currentIteratorIndex > -1) {
 				currentIterator = hashTable[currentIteratorIndex].iterator();
+				
+				
 			}
+			
+			
 		}
 		private int getCurrentIteratorIndex(int currentIndex) {
 			currentIndex++;
@@ -55,7 +58,9 @@ public class HashSet<T> implements Set<T> {
 				if(currentIteratorIndex >= 0) {
 					currentIterator = hashTable[currentIteratorIndex].iterator();
 				}
-			}			
+			}
+			
+			
 		}
 		@Override
 		public void remove() {
@@ -65,7 +70,8 @@ public class HashSet<T> implements Set<T> {
 			prevIterator.remove();
 			size--;
 			flNext = false;
-		}		
+		}
+		
 	}
 	@SuppressWarnings("unchecked")
 	public HashSet(int hashTableSize) {
@@ -127,12 +133,8 @@ public class HashSet<T> implements Set<T> {
 		int index = getHashTableIndex(pattern);
 		if (hashTable[index] != null) {
 			res = hashTable[index].remove(pattern);
-			System.out.println("Res"+res);
 			if (res) {
 				size--;
-			}
-			if(hashTable[index].size()==0) {
-				hashTable[index] = null;
 			}
 		}
 		return res;
@@ -143,92 +145,22 @@ public class HashSet<T> implements Set<T> {
 		int index = getHashTableIndex(pattern);
 		return hashTable[index] != null && hashTable[index].contains(pattern);
 	}
-//	@Override
-	//FIXME method should be removed after writing iterator
-//	public T[] toArray(T[] ar) {
-//		int size = size();
-//		if (ar.length < size) {
-//			ar = Arrays.copyOf(ar, size);
-//		}
-//		int index = 0;
-//		for(int i = 0; i < hashTable.length; i++) {
-//			LinkedList<T> list = hashTable[i];			
-//			if(list != null) {
-//				for(T obj: list) {
-//				System.out.println("List:"+list+ " obj:"+obj);	
-//					ar[index++] = obj;
-//				}
-//			}			
-//		}
-//		if (ar.length > size) {
-//			ar[size] = null;
-//		}
-//
-//		return ar;
-//	}
 	@Override
-	public void toMyString() {
-		// TODO Auto-generated method stub
-		
+	public T get(T pattern) {
+		T res = null;
+		int index = getHashTableIndex(pattern);
+		if(hashTable[index] != null) {
+			List<T> list = hashTable[index];
+			Iterator<T> it = list.iterator();
+			while(it.hasNext() && res == null) {
+				T obj = it.next();
+				if (obj.equals(pattern)) {
+					res = obj;
+				}
+			}
+		}
+		return res;
 	}
+	
 
 }
-
-//int indexHashTable = -1;
-//int indexList = 0;
-//LinkedList<T> currentList = getCurrentList();
-//LinkedList<T> prevList = null;
-//T currentObj = null;
-//boolean flNext = false;
-//int currentInd = 0;
-//
-//@Override
-//public boolean hasNext() {
-//	
-//	return currentList != null && indexHashTable < hashTable.length;
-//}		
-//
-//@Override
-//public T next() {
-//	if(!hasNext()) {
-//		throw new NoSuchElementException();
-//	}
-//	prevList = currentList;
-//	currentInd = indexHashTable;
-//	currentObj = getCurrentObj(currentList);
-//	flNext = true;
-//	return currentObj;			
-//}
-//
-//@Override
-//public void remove() {
-//	if(!flNext) {
-//		throw new IllegalStateException();
-//	}	
-//    prevList.remove(currentObj);   
-//	if(prevList.size() == 0) {
-//		hashTable[currentInd] = null;
-//	    indexList = 0;
-//	} else {
-//		indexList--;
-//	}			
-//	size--;
-//	flNext = false;
-//}
-//
-//private LinkedList<T> getCurrentList() {
-//	indexHashTable++;
-//	while(indexHashTable < hashTable.length && hashTable[indexHashTable] == null  ) {
-//		indexHashTable++;
-//	}
-//	return indexHashTable < hashTable.length ? hashTable[indexHashTable]: null;
-//}
-//
-//private T getCurrentObj(LinkedList<T> list) {
-//	T obj = list.get(indexList++);
-//	if(indexList == list.size()) {
-//		indexList = 0;
-//		currentList = getCurrentList();
-//	}
-//	return obj;
-//}
