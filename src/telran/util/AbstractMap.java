@@ -11,73 +11,59 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
-	    if (key == null) {
-	        throw new NullPointerException("put(): null key is prohibited");
-	    }
-	    if (value == null) {
-	        throw new NullPointerException("put(): null value is prohibited");
-	    }
-
-	    Entry<K, V> entry = set.get(new Entry<>(key, null));
-	    V res = null;
-	    if (entry != null) {
-	        res = entry.getValue();
-	        entry.setValue(value);
-	    } else {
-	        set.add(new Entry<>(key, value));
-	    }
-	    return res;
+		Entry<K, V> entry = set.get(new Entry<>(key, null));
+		V res = null;
+		if (entry != null) {
+			res = entry.getValue();
+			entry.setValue(value);
+		} else {
+			set.add(new Entry<>(key, value));
+		}
+		return res;
 	}
 
 	@Override
 	public boolean containsKey(K key) {
-		if(key == null) {
-			throw new NullPointerException("containsKey(): null is prohibited");
-		}
-		return set.contains(new Entry<>(key, null));
+		
+		return set.contains(new Entry<K, V>(key, null));
 	}
 
 	@Override
 	public boolean containsValue(V value) {
-	    if (value == null) {
-	        throw new NullPointerException("containsValue(): null is prohibited");
-	    }
-
-	    return set.stream().anyMatch(entry -> entry.getValue().equals(value));
+		
+		return set.stream().anyMatch(e -> e.getValue().equals(value));
 	}
 
 	@Override
 	public Set<K> keySet() {
-	    Set<K> res = getKeySet();
-	    set.stream().map(Entry::getKey).forEach(res::add);
-	    return res;
+		Set<K> res = getKeySet();
+		set.stream().map(e -> e.getKey()).forEach(key -> res.add(key));
+		return res;
 	}
-
 
 	abstract protected Set<K> getKeySet();
 
 	@Override
 	public Collection<V> values() {
-        List<V> values = new LinkedList<>();
-        set.stream().map(Entry::getValue).forEach(values::add);
-        return values;
+		List<V> res = new ArrayList<V>();
+		set.stream().map(e -> e.getValue()).forEach(v -> res.add(v));
+		return res;
 	}
 
 	@Override
 	public Set<Entry<K, V>> entrySet() {
+		
 		return set;
 	}
-	
 	@Override
 	public V remove(K key) {
-        if (key == null) {
-            throw new NullPointerException("remove(): null key is prohibited");
-        }
-        V removedValue = get(key);
-        if (!set.remove(new Entry<>(key, null))) {
-            removedValue = null;
-        }
-        return removedValue;
+		Entry<K, V> entry = set.get(new Entry<K, V>(key, null));
+		V res = null;
+		if(entry != null) {
+			res = entry.getValue();
+			set.remove(entry);
+		}
+		return res;
 	}
 
 }
