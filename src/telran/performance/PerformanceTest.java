@@ -1,28 +1,25 @@
 package telran.performance;
 
 public abstract class PerformanceTest {
-    private String testName;
-    private int nRuns;
-
-    public PerformanceTest(String testName, int nRuns) {
-        this.testName = testName;
-        this.nRuns = nRuns;
-    }
-
-    protected abstract void runTest();
-
-    public void run() {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < nRuns; i++) {
-            runTest();
-        }
-
-        long endTime = System.currentTimeMillis();
-        long runningTime = endTime - startTime;
-
-        System.out.println("Test Name: " + testName);
-        System.out.println("Number of Runs: " + nRuns);
-        System.out.println("Running Time: " + runningTime + " ms");
-    }
+	
+	private String testName;
+	private int nRuns;
+	public PerformanceTest(String testName, int nRuns) {
+		super();
+		this.testName = testName;
+		this.nRuns = nRuns;
+	}
+	abstract protected void runTest() ;
+	public void run() {
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < nRuns; i++) {
+			runTest();
+		}
+		displayInfo(start, System.currentTimeMillis());
+	}
+	private void displayInfo(long start, long finish) {
+		System.out.printf("\ntest %s; Number of the runs: %d; Running time: %dMs\n",
+				testName, nRuns, finish - start);
+		
+	}
 }

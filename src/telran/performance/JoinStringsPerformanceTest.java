@@ -2,23 +2,19 @@ package telran.performance;
 
 import telran.strings.JoinStrings;
 
-//public class JoinStringsPerformanceTest {
-//
-//}
 public class JoinStringsPerformanceTest extends PerformanceTest {
-    private JoinStrings joinStrings;
-    private String[] strings;
-    private String delimiter;
+	private String[] strings;
+	private JoinStrings joinStrings;
+	public JoinStringsPerformanceTest(String testName, int nRuns,
+			String[] strings, JoinStrings joinStrings) {
+		super(testName, nRuns);
+		this.strings = strings;
+		this.joinStrings = joinStrings;
+	}
+	@Override
+	protected void runTest() {
+		joinStrings.join(strings, " ");
 
-    public JoinStringsPerformanceTest(String testName, int nRuns, JoinStrings joinStrings, String[] strings, String delimiter) {
-        super(testName, nRuns);
-        this.joinStrings = joinStrings;
-        this.strings = strings;
-        this.delimiter = delimiter;
-    }
+	}
 
-    @Override
-    protected void runTest() {
-        joinStrings.join(strings, delimiter);
-    }
 }
